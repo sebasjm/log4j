@@ -522,11 +522,12 @@ public class DOMConfigurator implements Configurator {
 	  Element appenderRef = (Element) currentNode;
 	  Appender appender = findAppenderByReference(appenderRef);
 	  String refName =  subst(appenderRef.getAttribute(REF_ATTR));
-	  if(appender != null)
-	    LogLog.debug("Adding appender named ["+ refName+ 
+	  if(appender != null) {
+        LogLog.debug("Adding appender named ["+ refName+ 
 			 "] to category ["+cat.getName()+"].");
-	  else 
-	    LogLog.debug("Appender named ["+ refName + "] not found.");
+    } else {
+        LogLog.debug("Appender named ["+ refName + "] not found.");
+    }
 	    
 	  cat.addAppender(appender);
 	  
@@ -560,7 +561,7 @@ public class DOMConfigurator implements Configurator {
       final int length 	= params.getLength();
 
       for (int loop = 0; loop < length; loop++) {
-	Node currentNode = (Node)params.item(loop);
+	Node currentNode = params.item(loop);
 	if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
 	  Element currentElement = (Element) currentNode;
 	  String tagName = currentElement.getTagName();
@@ -613,7 +614,7 @@ public class DOMConfigurator implements Configurator {
           final int length 	= params.getLength();
 
           for (int loop = 0; loop < length; loop++) {
-                Node currentNode = (Node)params.item(loop);
+                Node currentNode = params.item(loop);
                 if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element currentElement = (Element) currentNode;
                     String tagName = currentElement.getTagName();

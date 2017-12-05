@@ -20,12 +20,33 @@
     <title>Apache log4j 1.2</title>
   </properties>
   <body>
-    <release version="1.2.17" date="2010-06-99" description="Maintenance release">
+    <release version="1.2.18" date="2012-??-??" description="Maintenance release">    
+       <action action="update" dev="grobmeier">Merged truncate feature to FormattingInfo from extras</action>
+       <action issue="54845" action="fix" dev="ggregory" due-to="Robert Balent">Typo in log4j 1.2 manual</action>
+       <action issue="53299" action="update" dev="grobmeier">Simplify log4j build</action>
+       <action issue="44370" action="fix" dev="grobmeier">MANIFEST.MF broken in log4j-1.2.15.jar</action>
+       <action issue="49932" action="fix" dev="grobmeier" due-to="Steve Coy">Additional OSGI/BND configuration elements</action>
+       <action action="remove" dev="grobmeier">Ant is not longer supported as build tool</action>
+       <action action="update" dev="grobmeier">Made use of Mavens Fludio Skin</action>
+       <action issue="49359" action="update" dev="grobmeier">Log4j site should have some mention of git mirroring</action>
+       <action issue="49077" action="remove" dev="grobmeier">Prepare smaller jar omitting LF5 and Chainsaw 1</action>
+       <action issue="53315" action="fix" dev="ggregory" due-to="Ville Skyttä">[PATCH] PropertyConfigurator javadoc fixes.</action>
+       <action issue="51361" action="fix" dev="ggregory" due-to="Gil Cottle">Inheritance spelled "inheritence" in documentation.</action>
+       <action issue="52424" action="fix" dev="ggregory" due-to="Per Hedman">Misspelled words in FAQ.</action>
+       <action issue="49243" action="fix" dev="ggregory" due-to="Rainer Jung">Fix one BZ number in Changelog of 1.2.16.</action>
+       <action issue="50369" action="fix" dev="ggregory" due-to="Gil Cottle">Missing comma in class header Javadoc for Level.</action>
+       <action issue="46626" action="add" dev="ggregory" due-to="Steven Willis">Log4J SyslogAppender does not handle the TAG field.</action>
+    </release>
+
+    <release version="1.2.17" date="2012-05-06" description="Maintenance release">
        <action issue="49470">log4j 1.2.17 release preparation</action>
-       <action issue="43282" action="fix">Eliminate duplicates in OSGi Import-Package directive.</action>
+       <action issue="52913" action="add" dev="ggregory">Configure from an InputStream</action>
+       <action issue="51597" action="fix">JDBCAppender not closed due to SQL Exception while executing an SQL (thanks to Anurag Agarwal)</action>
+       <action issue="50486" action="fix">Memoryleak - org.apache.log4j.helpers.ThreadLocalMap</action>
        <action issue="48588" action="fix">DOMConfigurator does not close input stream when configured based on URL.</action>
        <action issue="49078" action="fix">javadoc.jar was missing NOTICE and LICENSE and contained .svn entries.</action>
        <action issue="50238" action="fix">Wrong log levels logged with serialized LoggingEvent.</action>
+       <action issue="51766" action="add">Add org.apache.log4j.rewrite.RewriteAppender and org.apache.log4j.util.UtilLoggingLevel from discontinued receivers companion.</action>
     </release>
 
     <release version="1.2.16" date="2010-04-06" description="Maintenance release">
@@ -101,7 +122,7 @@
        <action action="add" issue="48187">Typo ("two three goals") in log4j FAQ</action>
        <action action="fix" issue="48531">Unit tests fail for system dates after 2009-12-31</action>
        <action action="fix" issue="48604">Download page does not have link to KEYS file</action>
-       <action action="add" issue="49812">Add parameterized logging utility classes LogMF and LogSF from extras companion.</action>
+       <action action="add" issue="48912">Make LogMF, LogSF available in core log4j.</action>
        <action action="add" issue="48927">Add EnhancedPatternLayout from extras companion.</action>
        <action action="fix" issue="48784">Links to example code broken in the JavaDocs</action>
        <action action="fix" issue="48953">Unused imports and variables in test code cause gcj compile warnings.</action>
@@ -115,7 +136,7 @@
        <action action="add" issue="48902">Add %throwable{n} and {-n} pattern to EnhancedPatternLayout to print n or drop last n lines.</action>
     </release>
 
-  
+
     <release version="1.2.15" date="2007-08-24" description="SyslogAppender enhancements, NTEventLogAppender and Maven build.">
 	    <action issue="40951">log4j 1.2.15 release preparation.</action>
         <action action="add" issue="40212">Switch to NOPLoggerRepository if application reloading nulls repositorySelector.</action>
@@ -211,7 +232,7 @@
 	   <action action="fix" issue="40501"> TRACE level missing in short introduction to log4j.</action>
 	   <action action="fix" issue="37960"> Update site generation to velocity 1.4 and remove dependency on logging/site project.</action>
     </release>
-
+  
     <release version="1.2.13" date="2005-12-04" description="TRACE level missing info fixed, ConsoleAppender.follow added to make redirection following an optional behavior.">
         <action action="fix" issue="36800">Location info missing for TRACE level messages.</action>
         <action action="fix" issue="37122">Console appender now behaves as before to fix
@@ -314,7 +335,6 @@
     http://www.qos.ch/logging/preparingFor13.jsp
 </action>
        </release>
-
 
       <release version="1.2.8" date="2003-02-19" description="Fixes to XMLAppender, DOMConfiguration, SocketAppender and JDBCAppender.">
  <action action="fix" issue="11570">XMLAppender would throw a
@@ -1861,7 +1881,7 @@
 
 </release>
 
-<release date="1999-10-15">
+<release version="initial" date="1999-10-15">
 <action>Initial availability on alphaWorks.  Refer to the FAQ for the lineage of the package.</action>
 </release>
   </body>

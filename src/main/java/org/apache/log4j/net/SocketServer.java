@@ -73,7 +73,7 @@ import org.apache.log4j.spi.RootLogger;
 
      <p>Currently, the hierarchy that will be used for a given request
      depends on the IP address of the client host. For example, two
-     separate applicatons running on the same host and logging to the
+     separate applications running on the same host and logging to the
      same server will share the same hierarchy. This is perfectly safe
      except that it might not provide the right amount of independence
      between applications. The <code>SocketServer</code> is intended
@@ -102,10 +102,11 @@ public class SocketServer  {
   public
   static
   void main(String argv[]) {
-    if(argv.length == 3)
-      init(argv[0], argv[1], argv[2]);
-    else
-      usage("Wrong number of arguments.");
+    if(argv.length == 3) {
+        init(argv[0], argv[1], argv[2]);
+    } else {
+        usage("Wrong number of arguments.");
+    }
 
     try {
       cat.info("Listening on port " + port);

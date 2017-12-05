@@ -16,7 +16,7 @@
  */
 
 
-// Contibutors: "Luke Blanshard" <Luke@quiq.com>
+// Contributors: "Luke Blanshard" <Luke@quiq.com>
 //              "Mark DONSZELMANN" <Mark.Donszelmann@cern.ch>
 //               Anders Kristensen <akristensen@dynamicsoft.com>
 
@@ -185,7 +185,7 @@ public class PropertyConfigurator implements Configurator {
     </pre>
     The first line defines the class name of the filter identified by ID;
     subsequent lines with the same ID specify filter option - value
-    paris. Multiple filters are added to the appender in the lexicographic
+    pairs. Multiple filters are added to the appender in the lexicographic
     order of IDs.
 
     The syntax for adding an {@link ErrorHandler} to an appender is:
@@ -316,7 +316,7 @@ public class PropertyConfigurator implements Configurator {
     # milliseconds, followed by the level of the log request,
     # followed by the two rightmost components of the logger name,
     # followed by the callers method name, followed by the line number,
-    # the nested disgnostic context and finally the message itself.
+    # the nested diagnostic context and finally the message itself.
     # Refer to the documentation of {@link PatternLayout} for further information
     # on the syntax of the ConversionPattern key.
     log4j.appender.A1.layout=org.apache.log4j.PatternLayout
@@ -405,16 +405,28 @@ public class PropertyConfigurator implements Configurator {
   }
 
   /**
-     Read configuration options from url <code>configURL</code>.
+  Read configuration options from url <code>configURL</code>.
 
-     @since 0.8.2
-   */
-  public
-  static
-  void configure(java.net.URL configURL) {
-    new PropertyConfigurator().doConfigure(configURL,
-					   LogManager.getLoggerRepository());
-  }
+  @since 0.8.2
+*/
+public
+static
+void configure(java.net.URL configURL) {
+ new PropertyConfigurator().doConfigure(configURL,
+                    LogManager.getLoggerRepository());
+}
+
+/**
+Reads configuration options from an InputStream.
+
+@since 1.2.17
+*/
+public
+static
+void configure(InputStream inputStream) {
+new PropertyConfigurator().doConfigure(inputStream,
+                  LogManager.getLoggerRepository());
+}
 
 
   /**
@@ -475,8 +487,9 @@ public class PropertyConfigurator implements Configurator {
     String value = properties.getProperty(LogLog.DEBUG_KEY);
     if(value == null) {
       value = properties.getProperty("log4j.configDebug");
-      if(value != null)
-	LogLog.warn("[log4j.configDebug] is deprecated. Use [log4j.debug] instead.");
+      if(value != null) {
+        LogLog.warn("[log4j.configDebug] is deprecated. Use [log4j.debug] instead.");
+    }
     }
 
     if(value != null) {
@@ -495,7 +508,7 @@ public class PropertyConfigurator implements Configurator {
 						       properties);
     if(thresholdStr != null) {
       hierarchy.setThreshold(OptionConverter.toLevel(thresholdStr,
-						     (Level) Level.ALL));
+						     Level.ALL));
       LogLog.debug("Hierarchy threshold set to ["+hierarchy.getThreshold()+"].");
     }
     
@@ -508,6 +521,27 @@ public class PropertyConfigurator implements Configurator {
     // garbage collection.
     registry.clear();
   }
+
+    /**
+     * Read configuration options from an InputStream.
+     * 
+     * @since 1.2.17
+     */
+    public void doConfigure(InputStream inputStream, LoggerRepository hierarchy) {
+        Properties props = new Properties();
+        try {
+            props.load(inputStream);
+        } catch (IOException e) {
+            if (e instanceof InterruptedIOException) {
+                Thread.currentThread().interrupt();
+            }
+            LogLog.error("Could not read configuration file from InputStream [" + inputStream
+                 + "].", e);
+            LogLog.error("Ignoring configuration InputStream [" + inputStream +"].");
+            return;
+          }
+        this.doConfigure(props, hierarchy);
+    }
 
   /**
      Read configuration options from url <code>configURL</code>.
@@ -607,9 +641,9 @@ public class PropertyConfigurator implements Configurator {
       effectiveFrefix = ROOT_CATEGORY_PREFIX;
     }
 
-    if(value == null)
-      LogLog.debug("Could not find root logger information. Is this OK?");
-    else {
+    if(value == null) {
+        LogLog.debug("Could not find root logger information. Is this OK?");
+    } else {
       Logger root = hierarchy.getRootLogger();
       synchronized(root) {
 	parseCategory(props, root, effectiveFrefix, INTERNAL_ROOT_NAME, value);
@@ -700,8 +734,9 @@ public class PropertyConfigurator implements Configurator {
     if(!(value.startsWith(",") || value.equals(""))) {
 
       // just to be on the safe side...
-      if(!st.hasMoreTokens())
-	return;
+      if(!st.hasMoreTokens()) {
+        return;
+    }
 
       String levelStr = st.nextToken();
       LogLog.debug("Level token is [" + levelStr + "].");
@@ -717,7 +752,7 @@ public class PropertyConfigurator implements Configurator {
 	  logger.setLevel(null);
 	}
       } else {
-	logger.setLevel(OptionConverter.toLevel(levelStr, (Level) Level.DEBUG));
+	logger.setLevel(OptionConverter.toLevel(levelStr, Level.DEBUG));
       }
       LogLog.debug("Category " + loggerName + " set to " + logger.getLevel());
     }
@@ -729,8 +764,9 @@ public class PropertyConfigurator implements Configurator {
     String appenderName;
     while(st.hasMoreTokens()) {
       appenderName = st.nextToken().trim();
-      if(appenderName == null || appenderName.equals(","))
-	continue;
+      if(appenderName == null || appenderName.equals(",")) {
+        continue;
+    }
       LogLog.debug("Parsing appender named \"" + appenderName +"\".");
       appender = parseAppender(props, appenderName);
       if(appender != null) {
@@ -794,7 +830,9 @@ public class PropertyConfigurator implements Configurator {
     				  Map.Entry entry = (Map.Entry) iter.next();
     				  int i = 0;
     				  for(; i < keys.length; i++) {
-    					  if(keys[i].equals(entry.getKey())) break;
+    					  if(keys[i].equals(entry.getKey())) {
+                            break;
+                        }
     				  }
     				  if (i == keys.length) {
     					  edited.put(entry.getKey(), entry.getValue());
@@ -946,7 +984,9 @@ class SortedKeyEnumeration implements Enumeration {
       String key = (String) f.nextElement();
       for (i = 0; i < last; ++i) {
         String s = (String) keys.get(i);
-        if (key.compareTo(s) <= 0) break;
+        if (key.compareTo(s) <= 0) {
+            break;
+        }
       }
       keys.add(i, key);
     }

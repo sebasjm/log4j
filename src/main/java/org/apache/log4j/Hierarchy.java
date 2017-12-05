@@ -164,7 +164,7 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
   */
   public
   void setThreshold(String levelStr) {
-    Level l = (Level) Level.toLevel(levelStr, null);
+    Level l = Level.toLevel(levelStr, null);
     if(l != null) {
       setThreshold(l);
     } else {
@@ -381,7 +381,7 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
   public
   void resetConfiguration() {
 
-    getRootLogger().setLevel((Level) Level.DEBUG);
+    getRootLogger().setLevel(Level.DEBUG);
     root.setResourceBundle(null);
     setThreshold(Level.ALL);
 
@@ -534,8 +534,9 @@ public class Hierarchy implements LoggerRepository, RendererSupport, ThrowableRe
       }
     }
     // If we could not find any existing parents, then link with root.
-    if(!parentFound)
-      cat.parent = root;
+    if(!parentFound) {
+        cat.parent = root;
+    }
   }
 
   /**

@@ -17,14 +17,15 @@
 
 package org.apache.log4j.helpers;
 
-import java.util.Properties;
-import java.net.URL;
+import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.net.URL;
+import java.util.Properties;
 
 import org.apache.log4j.Level;
+import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.spi.Configurator;
 import org.apache.log4j.spi.LoggerRepository;
-import org.apache.log4j.PropertyConfigurator;
 
 // Contributors:   Avy Sharell (sharell@online.fr)
 //                 Matthieu Verbert (mve@zurich.ibm.com)
@@ -71,14 +72,23 @@ public class OptionConverter {
       c = s.charAt(i++);
       if (c == '\\') {
 	c =  s.charAt(i++);
-	if(c == 'n')      c = '\n';
-	else if(c == 'r') c = '\r';
-	else if(c == 't') c = '\t';
-	else if(c == 'f') c = '\f';
-	else if(c == '\b') c = '\b';
-	else if(c == '\"') c = '\"';
-	else if(c == '\'') c = '\'';
-	else if(c == '\\') c = '\\';
+	if(c == 'n') {
+        c = '\n';
+    } else if(c == 'r') {
+        c = '\r';
+    } else if(c == 't') {
+        c = '\t';
+    } else if(c == 'f') {
+        c = '\f';
+    } else if(c == '\b') {
+        c = '\b';
+    } else if(c == '\"') {
+        c = '\"';
+    } else if(c == '\'') {
+        c = '\'';
+    } else if(c == '\\') {
+        c = '\\';
+    }
       }
       sbuf.append(c);
     }
@@ -134,13 +144,16 @@ public class OptionConverter {
   public
   static
   boolean toBoolean(String value, boolean dEfault) {
-    if(value == null)
-      return dEfault;
+    if(value == null) {
+        return dEfault;
+    }
     String trimmedVal = value.trim();
-    if("true".equalsIgnoreCase(trimmedVal))
-      return true;
-    if("false".equalsIgnoreCase(trimmedVal))
-      return false;
+    if("true".equalsIgnoreCase(trimmedVal)) {
+        return true;
+    }
+    if("false".equalsIgnoreCase(trimmedVal)) {
+        return false;
+    }
     return dEfault;
   }
 
@@ -183,8 +196,9 @@ public class OptionConverter {
   public
   static
   Level toLevel(String value, Level defaultValue) {
-    if(value == null)
-      return defaultValue;
+    if(value == null) {
+        return defaultValue;
+    }
       
     value = value.trim();
 
@@ -194,7 +208,7 @@ public class OptionConverter {
 	return null;
       } else {
 	// no class name specified : use standard Level class
-	return(Level) Level.toLevel(value, defaultValue);
+	return Level.toLevel(value, defaultValue);
       }
     }
 
@@ -255,8 +269,9 @@ public class OptionConverter {
   public
   static
   long toFileSize(String value, long dEfault) {
-    if(value == null)
-      return dEfault;
+    if(value == null) {
+        return dEfault;
+    }
 
     String s = value.trim().toUpperCase();
     long multiplier = 1;
@@ -296,8 +311,9 @@ public class OptionConverter {
   static
   String findAndSubst(String key, Properties props) {
     String value = props.getProperty(key);
-    if(value == null)
-      return null;
+    if(value == null) {
+        return null;
+    }
 
     try {
       return substVars(value, props);
@@ -434,6 +450,48 @@ public class OptionConverter {
       }
     }
   }
+
+    /**
+     * Configure log4j given an {@link InputStream}.
+     * 
+     * <p>
+     * The InputStream will be interpreted by a new instance of a log4j configurator.
+     * </p>
+     * <p>
+     * All configurations steps are taken on the <code>hierarchy</code> passed as a parameter.
+     * </p>
+     * 
+     * @param inputStream
+     *            The configuration input stream.
+     * @param clazz
+     *            The class name, of the log4j configurator which will parse the <code>inputStream</code>. This must be a
+     *            subclass of {@link Configurator}, or null. If this value is null then a default configurator of
+     *            {@link PropertyConfigurator} is used.
+     * @param hierarchy
+     *            The {@link org.apache.log4j.Hierarchy} to act on.
+     * @since 1.2.17
+     */
+
+static
+public
+void selectAndConfigure(InputStream inputStream, String clazz, LoggerRepository hierarchy) {
+Configurator configurator = null;
+
+if(clazz != null) {
+  LogLog.debug("Preferred configurator class: " + clazz);
+  configurator = (Configurator) instantiateByClassName(clazz,
+                           Configurator.class,
+                           null);
+  if(configurator == null) {
+   LogLog.error("Could not instantiate configurator ["+clazz+"].");
+   return;
+  }
+} else {
+  configurator = new PropertyConfigurator();
+}
+
+configurator.doConfigure(inputStream, hierarchy);
+}
 
 
   /**

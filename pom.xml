@@ -26,18 +26,19 @@ To build NTEventLogAppender.dll using Microsoft tools, run the appropriate vcvar
 target platform and specify -Dntdll_target=msbuild on the mvn command line.
 
 -->        
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>log4j</groupId>
   <artifactId>log4j</artifactId>
   <packaging>bundle</packaging>
   <name>Apache Log4j</name>
-  <version>1.2.17-SNAPSHOT</version>
+  <version>1.2.18-SNAPSHOT</version>
   <description>Apache Log4j 1.2</description>
   <url>http://logging.apache.org/log4j/1.2/</url>
   <issueManagement>
     <system>Bugzilla</system>
-    <url>http://issues.apache.org/bugzilla/</url>
+    <url>https://issues.apache.org/bugzilla/describecomponents.cgi?product=Log4j</url>
   </issueManagement>
   <ciManagement>
     <system>Gump</system>
@@ -100,7 +101,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
           <workingDirectory>tests</workingDirectory>
           <reportFormat>plain</reportFormat>
           <forkMode>pertest</forkMode>
-          <skip>true</skip>
+          <skip>false</skip>
           <includes>
             <include>org/apache/log4j/LevelTest.java</include>
             <include>org/apache/log4j/PriorityTest.java</include>
@@ -125,14 +126,12 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
             <include>org/apache/log4j/xml/DOMTestCase.java</include>
             <include>org/apache/log4j/xml/CustomLevelTestCase.java</include>
             <include>org/apache/log4j/customLogger/XLoggerTestCase.java</include>
-            <!-- DefaultInit  -->
+            <!-- DefaultInit -->
             <!-- SocketServer -->
             <include>org/apache/log4j/xml/XMLLayoutTestCase.java</include>
             <include>org/apache/log4j/xml/AsyncAppenderTestCase.java</include>
             <include>org/apache/log4j/varia/LevelMatchFilterTestCase.java</include>
-            <!--   ErrorHandlerTestCase is not run in Ant build either
-            <include>org/apache/log4j/varia/ErrorHandlerTestCase.java</include>
-            -->
+            <!-- ErrorHandlerTestCase is not run in Ant build either <include>org/apache/log4j/varia/ErrorHandlerTestCase.java</include> -->
             <!-- include>org/apache/log4j/helpers/OptionConverterTestCase.java</include -->
             <include>org/apache/log4j/helpers/BoundedFIFOTestCase.java</include>
             <include>org/apache/log4j/helpers/CyclicBufferTestCase.java</include>
@@ -151,8 +150,8 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.1</version>
         <configuration>
-          <source>1.3</source>
-          <target>1.1</target>
+          <source>1.4</source>
+          <target>1.4</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
@@ -163,9 +162,9 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
           <archive>
             <manifestSections>
               <manifestSection>
-                <name>org.apache.log4j</name>
+                <name>org/apache/log4j/</name>
                 <manifestEntries>
-		  <DynamicImport-Package>*</DynamicImport-Package>
+                  <DynamicImport-Package>*</DynamicImport-Package>
                   <Implementation-Title>log4j</Implementation-Title>
                   <Implementation-Version>${project.version}</Implementation-Version>
                   <Implementation-Vendor>"Apache Software Foundation"</Implementation-Vendor>
@@ -179,7 +178,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.2</version>
         <executions>
-          <!--   generate NTEventLogAppender.dll    -->
+          <!-- generate NTEventLogAppender.dll -->
           <execution>
             <phase>process-classes</phase>
             <id>ntdll</id>
@@ -197,7 +196,15 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
               <goal>run</goal>
             </goals>
           </execution>
-          <!--   create tests/output prior to test run    -->
+          <!-- create tests/output prior to test run -->
+            <!--
+
+            TODO: several tests are run from tests/build.xml,
+            for example longUnit
+
+            Refactor these tests to run with Surefire
+
+
           <execution>
             <phase>test-compile</phase>
             <id>mkdir_tests_output</id>
@@ -228,7 +235,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
             <id>runAll</id>
             <configuration>
               <tasks>
-                 <ant dir="tests" target="runAll">
+                <ant dir="tests" target="runAll">
                   <property name="m2_repo" location="${m2_repo}" />
                   <property name="log4j.jar" location="target/classes" />
                   <property name="project.lib.home" location="target" />
@@ -239,14 +246,16 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
               <goal>run</goal>
             </goals>
           </execution>
-          <!--   release builds will put SVN tags into the SCM page, this changes it back to trunk  -->
+          -->
+          <!-- release builds will put SVN tags into the SCM page, this changes it back to trunk -->
           <execution>
             <phase>site</phase>
             <id>untag-site</id>
             <configuration>
               <tasks>
                 <taskdef name="replaceregexp" classname="org.apache.tools.ant.taskdefs.optional.ReplaceRegExp" />
-                <replaceregexp file="target/site/source-repository.html" match="/tags/[^ &quot;'&lt;]*" replace="/trunk" flags="g" />
+                <replaceregexp file="target/site/source-repository.html" match="/tags/[^ &quot;'&lt;]*"
+                  replace="/trunk" flags="g" />
                 <replaceregexp match="-- Generated by (.*) on .*--" replace="-- Generated by \1 --" flags="g">
                   <fileset dir="target/site/apidocs" includes="**/*.html" />
                 </replaceregexp>
@@ -256,6 +265,11 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
               <goal>run</goal>
             </goals>
           </execution>
+
+            <!--
+
+            TODO: checks out a site from svn. Is that necessary?
+
           <execution>
             <phase>post-site</phase>
             <id>post-site</id>
@@ -268,6 +282,14 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
               <goal>run</goal>
             </goals>
           </execution>
+
+          -->
+
+
+            <!--
+
+            TODO: this is doable from maven
+
           <execution>
             <phase>site-deploy</phase>
             <id>site-deploy</id>
@@ -280,6 +302,8 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
               <goal>run</goal>
             </goals>
           </execution>
+          -->
+
           <execution>
             <id>javadoc.resources</id>
             <phase>generate-sources</phase>
@@ -318,7 +342,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
-            <scope>test</scope>
+            <scope>compile</scope>
           </dependency>
           <dependency>
             <groupId>sun.jdk</groupId>
@@ -365,7 +389,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
           </execution>
           <execution>
             <id>site</id>
-	    <phase>pre-site</phase>
+            <phase>pre-site</phase>
             <goals>
               <goal>javadoc</goal>
             </goals>
@@ -375,10 +399,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-9</version>
-        <!--
-          Bug MRELEASE-273 has been throwing NPE during release:perform,
-          typically after deploy so this places it last.
-        -->
+        <!-- Bug MRELEASE-273 has been throwing NPE during release:perform, typically after deploy so this places it last. -->
         <configuration>
           <goals>package site-deploy assembly:attached deploy</goals>
         </configuration>
@@ -394,13 +415,8 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
           </execution>
         </executions>
       </plugin>
-      <!--
-        clirr:check will fail with NullPointerException
-        due to missing javax.jms.MessageListener,
-        however it will trigger download of supporting components
-        which can allow "ant clirr" to succeed.
-        Could possibly run on a JavaEE platform.
-       -->
+      <!-- clirr:check will fail with NullPointerException due to missing javax.jms.MessageListener, however it will trigger 
+        download of supporting components which can allow "ant clirr" to succeed. Could possibly run on a JavaEE platform. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>clirr-maven-plugin</artifactId>
@@ -414,35 +430,45 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
         <artifactId>rat-maven-plugin</artifactId>
         <version>1.0-alpha-3</version>
         <configuration>
-            <excludes>
-                <exclude>tests/witness/**</exclude>
-                <exclude>tests/output/**</exclude>
-                <exclude>tests/classes/**</exclude>
-            </excludes>
+          <excludes>
+            <exclude>tests/witness/**</exclude>
+            <exclude>tests/output/**</exclude>
+            <exclude>tests/classes/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
+        <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>2.1.0</version>
+            <extensions>true</extensions>
+            <configuration>
+                <instructions>
+                    <Bundle-SymbolicName>org.apache.log4j</Bundle-SymbolicName>
+                    <Export-Package>org.apache.log4j.*;version=${project.version};-noimport:=true</Export-Package>
+                    <Import-Package>
+                        javax.jmdns.*;resolution:=optional,
+                        javax.jms.*;resolution:=optional,
+                        javax.mail.*;resolution:=optional,
+                        *
+                    </Import-Package>
+                    <Bundle-DocURL>http://logging.apache.org/log4j/1.2</Bundle-DocURL>
+                    <Eclipse-BuddyPolicy>registered</Eclipse-BuddyPolicy>
+                    <Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+                </instructions>
+            </configuration>
+        </plugin>
       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.1.0</version>
-        <extensions>true</extensions>
-        <configuration>
-            <instructions>
-                <!-- omit chainsaw and LF5   -->
-                <Export-Package>!org.apache.log4j.lf5.*,
-                                !org.apache.log4j.chainsaw.*,
-                                org.apache.log4j.*;version=1.2.17;-noimport:=true</Export-Package>
-		<!--  all other potential imports are covered by DynamicImport-Package earlier -->
-		<Import-Package>!javax.swing.*,
-				!com.ibm.uvm.tools.*,
-				!com.sun.jdmk.comm.*,
-				javax.jmdns.*;resolution:=optional,
-				javax.jms.*;resolution:=optional,
-				javax.mail.*;resolution:=optional,
-                                *</Import-Package>
-                <Bundle-DocURL>http://logging.apache.org/log4j/1.2</Bundle-DocURL>
-            </instructions>
-        </configuration>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>site</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <testSourceDirectory>tests/src/java</testSourceDirectory>
@@ -452,6 +478,41 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
       </testResource>
     </testResources>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>scm</report>
+              <report>dependencies</report>
+              <report>cim</report>
+              <report>issue-tracking</report>
+              <report>mailing-list</report>
+              <report>license</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-changes-plugin</artifactId>
+        <version>2.7</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>changes-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
   <profiles>
     <profile>
       <id>mac</id>
@@ -500,14 +561,8 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
-    <!--  the following dependency is not needed on JDK 1.5 and higher 
-    <dependency>
-      <groupId>com.sun.jmx</groupId>
-      <artifactId>jmxri</artifactId>
-      <version>1.2.1</version>
-      <optional>true</optional>
-    </dependency>
-    -->
+    <!-- the following dependency is not needed on JDK 1.5 and higher <dependency> <groupId>com.sun.jmx</groupId> <artifactId>jmxri</artifactId> 
+      <version>1.2.1</version> <optional>true</optional> </dependency> -->
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
@@ -526,46 +581,7 @@ target platform and specify -Dntdll_target=msbuild on the mvn command line.
       <version>1.0</version>
       <optional>true</optional>
     </dependency>
- </dependencies>
-  <reporting>
-    <excludeDefaults>true</excludeDefaults>
-    <plugins>
-      <plugin>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>scm</report>
-              <report>dependencies</report>
-              <report>cim</report>
-              <report>issue-tracking</report>
-              <report>mailing-list</report>
-              <report>license</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-changes-plugin</artifactId>
-        <version>2.3</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-        <configuration>
-          <issueLinkTemplate>%URL%/show_bug.cgi?id=%ISSUE%</issueLinkTemplate>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+  </dependencies>
   <distributionManagement>
     <repository>
       <id>logging.repo</id>
